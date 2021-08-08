@@ -1,179 +1,50 @@
-FROM tinylab/cloud-ubuntu-vm_embedded
-MAINTAINER Wu Zhangjin <wuzhangjin@gmail.com>
+# initially from the git branch oel-test
+# producted and maintained by Shaun. Riumin. Leo at shaunleonotryusho@gmail.com
+
+FROM oel:alpha-1.1
+
+# the following records are for the OpenEuler-20.03-LTS-SP1 version
+
+# available package installed via yum
+# python cpio gettext btrfs-progs dosfstools
+
+# the following is installed already
+# less curl
+
+# the following shall be checked for its specific version in the present system
+# sshpass   <- glibc >= 2.33    <- gcc, available with yum
+#                               <- bison, available with yum
+#                               <- make, availabel with yum
+#                               <- m4 (here m4 is not bundled with bison), available with yum
+# 			Done, I built glibc 2.34 from source and installed it to /usr/local
+# Done, I built sshpass 1.08 from source and installed it to /usr/local
+
+# libc6-(dev-)?*-cross (ARCH: armel, arm64, riscv64, i386)
+
+# python3-serial
+# You could install it with yum as python3-pyserial-3.4-2.oe1.noarch
+
+# gpg-agent 
+# You don't have to install it as it is already on the system
 
 
-RUN sed -i -e "s%archive.ubuntu.com%mirrors.163.com%g" /etc/apt/sources.list
+# qemu bundle
+# qemu		<- glib-2.48, available with yum
+#			<- gthread-2.0, available with yum
+#			<- pixman-devel, available with yum
+#			<- git, available with yum
+# 			<- diffutils, available with yum
+# Done, I built qemu v6.0.0 from source to /usr/local.
 
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends  \
-	python \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        cpio \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /home/ubuntu/ \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-# START: for old gcc
-RUN cp /etc/apt/sources.list /etc/apt/sources.list.bak
-RUN sed -i -e "s%archive.ubuntu.com%mirrors.163.com%g;s%focal%trusty%g" /etc/apt/sources.list
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        gcc-4.4 \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        gcc-4.8 \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN \
-       update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 42 \
-    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.4 35 \
-    && chmod a+rw /etc/alternatives/ \
-    && chmod a+rw /var/lib/dpkg/alternatives/
-
-RUN mv /etc/apt/sources.list.bak /etc/apt/sources.list
-# END: for old gcc
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        gettext \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        less \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        sshpass \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        python3-serial \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        curl \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        libc6-dev-armel-cross libc6-armel-cross \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        libc6-dev-arm64-cross libc6-arm64-cross \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        libc6-riscv64-cross libc6-dev-riscv64-cross \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        linux-libc-dev-i386-cross \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-# Allow to add new ppa source
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        gpg-agent \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        btrfs-progs \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        browser-plugin-freshplayer-pepperflash \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-# for mkfs.vfat
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        dosfstools \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
-
-# for qemu gui support
-RUN apt-get -y update \
-    && apt-get install -y --force-yes --no-install-recommends \
-        qemu-system-gui \
-        qemu-system-arm \
-        qemu-system-mips \
-        qemu-system-misc \
-        qemu-system-ppc \
-        qemu-system-s390x \
-        qemu-system-sparc \
-        qemu-system-x86 \
-    && apt-get autoclean -y \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/*.deb
+# the following packages are required for launching the container with linux-lab tools/docker/run command
+# sudo, available via yum
+# pwgen, built from source
+# bridge-utils.x86_64, available from source
+# passwd, available from source
 
 EXPOSE 5900 22
 
 WORKDIR /labs/
 
 ENTRYPOINT ["/tools/lab/run"]
+# CMD ["/bin/bash"]
