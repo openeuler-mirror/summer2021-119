@@ -1,7 +1,7 @@
 # initially from the git branch oel-test
 # producted and maintained by Shaun. Riumin. Leo at shaunleonotryusho@gmail.com
 
-FROM oel:alpha-1.1
+FROM oel:alpha-1.2-headless
 
 # the following records are for the OpenEuler-20.03-LTS-SP1 version
 
@@ -42,9 +42,24 @@ FROM oel:alpha-1.1
 # bridge-utils.x86_64, available from source
 # passwd, available from source
 
+# lxqt      <- automake, available via yum
+#           <- gtk-doc, available via yum
+#           <- libtool, available via yum
+#           <- cmake, available via yum
+#           <- gcc-c++, available via yum
+#           <- mesa-libGLw.x86_64, available via yum
+#           <- kf5-kwindowsystem-devel.x86_64, available via yum
+#           <- libXScrnSaver-devel.x86_64, available via yum
+# qt5-linguist.x86_64
+# qt5-qtx11extras-devel.x86_64
+# qt5*devel
+#           <- libfm-1.3.2, built from source   <- vala, available via yum
+#                                               <- intltool.noarch, available via yum
+#                                               <- libdbusmenu-gtk2-devel.x86_64, pango-devel, cairo-devel
+
 EXPOSE 5900 22
 
 WORKDIR /labs/
 
+# ENTRYPOINT ["/sbin/init"]
 ENTRYPOINT ["/tools/lab/run"]
-# CMD ["/bin/bash"]
